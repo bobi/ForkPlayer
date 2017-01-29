@@ -1,0 +1,23 @@
+AddDefaultCharset utf-8
+
+<IfModule env_module>
+    SetEnv FP_LOCAL_VIDEO_PATH ${FP_LOCAL_VIDEO_PATH}
+</IfModule>
+
+Header set Access-Control-Allow-Origin "*"
+Header set Content-type "text/html; charset=UTF-8"
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^$	index.php [L]
+
+    ## Remote Fork Emulation
+    RewriteRule ^test/?$	test.php [L,QSA]
+    RewriteRule ^parserlink/?$	parserlink.php [L,QSA]
+    RewriteRule ^treeview/?$	treeview.php [L,QSA]
+
+    RewriteRule ^plugin/([^/]+)/?$	index.php?plugin=$1 [L,QSA]
+
+    ##local site
+
+</IfModule>
