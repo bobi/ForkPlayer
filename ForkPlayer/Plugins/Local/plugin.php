@@ -44,10 +44,6 @@ class LocalPlugin extends BasePlugin
     {
         $path = $context->getRequest()->getParameter('path');
 
-        if (empty($this->root)) {
-            $this->root = $context->getRequest()->getParameter(self::FP_LOCAL_VIDEO_PATH);
-        }
-
         if (empty($path)) {
             $path = $this->root;
         } else {
