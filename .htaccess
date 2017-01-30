@@ -14,7 +14,7 @@ Header set Content-type "text/html; charset=UTF-8"
     ## Remote Fork Emulation
     RewriteRule ^test/?$	test.php [L,QSA]
     RewriteRule ^parserlink/?$	parserlink.php [L,QSA]
-    RewriteRule ^treeview/?$	treeview.php [L,QSA]
+    RewriteRule ^treeview/?$	index.php [L,QSA]
 
     ## Plugins
     RewriteRule ^plugin/([^/]+)/?$	index.php?plugin=$1 [L,QSA]
