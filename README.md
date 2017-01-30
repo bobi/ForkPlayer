@@ -39,5 +39,5 @@ Change **FP_LOCAL_VIDEO_PATH**, **FP_DOCUMENT_ROOT**, Path to logs - accordintg 
 
 Configure RemoteFork on TV to your router/NAS IP and port 89
 
-Сlick on "Перейти по адресу" and enter your http://IP:port then add address to start page
+Open RemoteFork Player DLNA or you can also, click on "Перейти по адресу" and enter your http://IP:port then add address to start page
 
