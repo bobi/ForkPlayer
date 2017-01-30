@@ -17,6 +17,7 @@ use ForkPlayer\Utils\StringUtils;
 
 class LocalPlugin extends BasePlugin
 {
+    const FP_LOCAL_VIDEO_PATH = 'FP_LOCAL_VIDEO_PATH';
     /**
      * @var string
      */
@@ -32,7 +33,7 @@ class LocalPlugin extends BasePlugin
     public function __construct()
     {
         parent::__construct('NetworkResources', 'Network Resources', 'Network Resources', 'img/local-network.png');
-        $this->root = realpath($_SERVER['FP_LOCAL_VIDEO_PATH']);
+        $this->root = realpath($_SERVER[self::FP_LOCAL_VIDEO_PATH]);
     }
 
     /**
@@ -42,6 +43,10 @@ class LocalPlugin extends BasePlugin
     public function dispatch($context)
     {
         $path = $context->getRequest()->getParameter('path');
+
+        if (empty($this->root)) {
+            $this->root = $context->getRequest()->getParameter(self::FP_LOCAL_VIDEO_PATH);
+        }
 
         if (empty($path)) {
             $path = $this->root;
