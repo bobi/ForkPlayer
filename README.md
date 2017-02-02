@@ -44,7 +44,7 @@ server {
 	listen 89;
 	charset utf-8;
 
-	root e:/projects/home/ForkPlayerKomaTv;
+	root /Path/to/forkplayer/script;
 	index index.php;
 	server_name localhost;
 
@@ -52,7 +52,7 @@ server {
 	add_header Access-Control-Allow-Origin *;
 
 	location /localvideo {
-		alias "V:/";
+		alias /Path/to/Folder/with/videos;
 		autoindex on;
 	}
 	location / {
@@ -73,7 +73,7 @@ server {
 	location ~ .php$ {
 		fastcgi_pass   127.0.0.1:9123;
 		fastcgi_index  index.php;
-		fastcgi_param FP_LOCAL_VIDEO_PATH V:/;
+		fastcgi_param FP_LOCAL_VIDEO_PATH /Path/to/Folder/with/videos;
 		include fastcgi.conf;
 		include fastcgi_params;			
 	}
