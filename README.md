@@ -2,7 +2,7 @@
 
 ##RemoteFork that can be run on with PHP on router or NAS.
 
-Apache config example:
+**Apache config example:**
 ```apache
 Listen 89
 
@@ -31,13 +31,55 @@ Listen 89
 
 </VirtualHost>
 ```
-**FP_LOCAL_VIDEO_PATH** - Path to folder with videos
+_FP_LOCAL_VIDEO_PATH_ - Path to folder with videos
 
-**FP_DOCUMENT_ROOT** - Path to ForkPlayer script
+_FP_DOCUMENT_ROOT_ - Path to ForkPlayer script
 
-Change **FP_LOCAL_VIDEO_PATH**, **FP_DOCUMENT_ROOT**, Path to logs - accordintg to your router config.
+Change _FP_LOCAL_VIDEO_PATH_, _FP_DOCUMENT_ROOT_, Path to logs - accordintg to your router config.
+
+**nginx config example:**
+
+```nginx
+server {
+	listen 89;
+	charset utf-8;
+
+	root e:/projects/home/ForkPlayerKomaTv;
+	index index.php;
+	server_name localhost;
+
+	default_type text/html;
+	add_header Access-Control-Allow-Origin *;
+
+	location /localvideo {
+		alias "V:/";
+		autoindex on;
+	}
+	location / {
+		rewrite ^/$ /index.php;
+	}
+	location /test {
+		rewrite ^/test/?$ /test.php;
+	}
+	location /parserlink {
+		rewrite ^/parserlink/?$ /parserlink.php;
+	}
+	location /treeview {
+		rewrite ^/treeview/?$ /index.php;
+	}
+	location /plugin {
+		rewrite ^/plugin/([^/]+)/?$ /index.php?plugin=$1;
+	}
+	location ~ .php$ {
+		fastcgi_pass   127.0.0.1:9123;
+		fastcgi_index  index.php;
+		fastcgi_param FP_LOCAL_VIDEO_PATH V:/;
+		include fastcgi.conf;
+		include fastcgi_params;			
+	}
+}	
+```
 
 Configure RemoteFork on TV to your router/NAS IP and port 89
 
 Open RemoteFork Player DLNA or you can also, click on "Перейти по адресу" and enter your http://IP:port then add address to start page
-
