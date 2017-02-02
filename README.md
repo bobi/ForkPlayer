@@ -1,6 +1,6 @@
 # ForkPlayer
 
-##RemoteFork that can be run on with PHP on router or NAS.
+##RemoteFork that can be run with PHP on Linux/router/NAS.
 
 **Apache config example:**
 ```apache
