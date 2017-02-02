@@ -2,6 +2,10 @@
 
 ##RemoteFork that can be run with PHP on Linux/router/NAS.
 
+* Configure webserver with examples below
+* Configure RemoteFork on TV to your router/NAS IP and port
+* Open RemoteFork Player DLNA or you can also, click on "Перейти по адресу" and enter your http://IP:port then add address to start page
+
 **Apache config example:**
 ```apache
 Listen 89
@@ -79,7 +83,3 @@ server {
 	}
 }	
 ```
-
-Configure RemoteFork on TV to your router/NAS IP and port 89
-
-Open RemoteFork Player DLNA or you can also, click on "Перейти по адресу" and enter your http://IP:port then add address to start page
