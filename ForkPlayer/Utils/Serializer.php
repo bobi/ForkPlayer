@@ -102,4 +102,68 @@ class Serializer
 
         return $xml->saveXML();
     }
+
+    /**
+     * @param Playlist $playlist
+     * @return string
+     */
+    public static function toJson($playlist) {
+        $channels = $playlist->getItems();
+
+        $result = array();
+
+        if (!empty($channels)) {
+            $playlistName = $playlist->getName();
+
+            if (!empty($playlistName)) {
+                $result['playlist_name'] = $playlistName;
+            }
+
+            $nextPageUrl = $playlist->getNextPage();
+
+            if (!empty($nextPageUrl)) {
+                $result['next_page_url'] = $nextPageUrl;
+            }
+
+            $items = array();
+
+            foreach ($channels as $channel) {
+                $ch = array();
+
+                $ch['title'] = $channel->getName();
+
+                $description = $channel->getDescription();
+                if (!empty($description)) {
+                    $ch['description'] = $description;
+                }
+
+                switch ($channel->getType()->get()) {
+                    case ItemType::DIRECTORY:
+                        $ch['playlist_url'] = $channel->getLink();
+                        break;
+                    case ItemType::FILE:
+                        $ch['stream_url'] = $channel->getLink();
+                        break;
+                    case ItemType::SEARCH:
+                        $ch['playlist_url'] = $channel->getLink();
+                        $ch['search_on'] = 'search';
+                        break;
+                }
+
+                $ch['logo_30x30'] = $channel->getImageLink();
+
+                array_push($items, $ch);
+            }
+
+            $result['channels'] = $items;
+        }
+
+        $res = json_encode($result);
+
+        if ($res) {
+            return $res;
+        } else {
+            return json_encode(array('channels' => array(array('title' => json_last_error_msg()))));
+        }
+    }
 }

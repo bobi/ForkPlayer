@@ -43,14 +43,14 @@ class ForkPlayer
         $pluginId = $req->getParameter('plugin');
 
         if (empty($pluginId)) {
-            return Serializer::toXml($this->pluginsPlaylist($req));
+            return Serializer::toJson($this->pluginsPlaylist($req));
         } else {
             $plugin = $this->plugins->get($pluginId);
 
             if (isset($plugin)) {
-                return Serializer::toXml($plugin->dispatch(new PluginContext($req, $pluginId)));
+                return Serializer::toJson($plugin->dispatch(new PluginContext($req, $pluginId)));
             } else {
-                return Serializer::toXml(Playlist::emptyResponse());
+                return Serializer::toJson(Playlist::emptyResponse());
             }
         }
     }
