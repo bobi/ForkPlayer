@@ -52,7 +52,7 @@ server {
 	index index.php;
 	server_name localhost;
 
-	default_type text/html;
+	default_type application/json;
 	add_header Access-Control-Allow-Origin *;
 
 	location /localvideo {
