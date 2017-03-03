@@ -10,6 +10,7 @@ namespace ForkPlayer\Utils;
 
 
 use DOMDocument;
+use ForkPlayer\Playlist\Item;
 use ForkPlayer\Playlist\ItemType;
 use ForkPlayer\Playlist\Playlist;
 
@@ -127,6 +128,9 @@ class Serializer
 
             $items = array();
 
+            /**
+             * @var Item channel
+             */
             foreach ($channels as $channel) {
                 $ch = array();
 
@@ -158,7 +162,7 @@ class Serializer
             $result['channels'] = $items;
         }
 
-        $res = json_encode($result);
+        $res = json_encode($result, JSON_UNESCAPED_UNICODE);
 
         if ($res) {
             return $res;
