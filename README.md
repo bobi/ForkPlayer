@@ -83,3 +83,18 @@ server {
 	}
 }	
 ```
+
+**output format:**
+
+_to set default output format to **json**_
+
+for apache just add in .htaccess file followng code
+```apache
+<IfModule env_module>
+    SetEnv OUTPUT_FORMAT json
+</IfModule>
+```
+for nginx add
+```nginx
+fastcgi_param OUTPUT_FORMAT json
+```
