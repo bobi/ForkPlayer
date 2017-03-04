@@ -13,6 +13,9 @@ Header set Access-Control-Allow-Origin "*"
     ## Remote Fork Emulation
     RewriteRule ^test/?$	test.php [L,QSA]
     RewriteRule ^parserlink/?$	parserlink.php [L,QSA]
+
+    RewriteRule ^proxym3u8.*?$	proxym3u8.php [L,QSA]
+
     RewriteRule ^treeview/?$	index.php [L,QSA]
 
     ## Plugins
