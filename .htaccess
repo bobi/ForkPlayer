@@ -5,7 +5,6 @@ AddDefaultCharset utf-8
 </IfModule>
 
 Header set Access-Control-Allow-Origin "*"
-Header set Content-type "application/json; charset=UTF-8"
 
 <IfModule mod_rewrite.c>
     RewriteEngine On

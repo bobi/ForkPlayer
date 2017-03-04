@@ -15,6 +15,7 @@ use ForkPlayer\Playlist\ItemType;
 use ForkPlayer\Playlist\Playlist;
 use ForkPlayer\Plugins\Plugins;
 use ForkPlayer\Request\Request;
+use ForkPlayer\Utils\OutputFormat;
 use ForkPlayer\Utils\Serializer;
 use ForkPlayer\Utils\StringUtils;
 
@@ -43,14 +44,14 @@ class ForkPlayer
         $pluginId = $req->getParameter('plugin');
 
         if (empty($pluginId)) {
-            return Serializer::toJson($this->pluginsPlaylist($req));
+            return self::serializePlaylist($this->pluginsPlaylist($req));
         } else {
             $plugin = $this->plugins->get($pluginId);
 
             if (isset($plugin)) {
-                return Serializer::toJson($plugin->dispatch(new PluginContext($req, $pluginId)));
+                return self::serializePlaylist($plugin->dispatch(new PluginContext($req, $pluginId)));
             } else {
-                return Serializer::toJson(Playlist::emptyResponse());
+                return self::serializePlaylist(Playlist::emptyResponse());
             }
         }
     }
@@ -83,5 +84,22 @@ class ForkPlayer
         }
 
         return Playlist::builder()->withName("All Plugins")->withItems($items)->build();
+    }
+
+    /**
+     * @param Playlist $playlist
+     * @return string
+     */
+    private static function serializePlaylist($playlist)
+    {
+        $outputFormat = new OutputFormat();
+
+        header($outputFormat->getHeader(), true);
+
+        if ($outputFormat::JSON == $outputFormat->getFormat()) {
+            return Serializer::toJson($playlist);
+        } else {
+            return Serializer::toXml($playlist);
+        }
     }
 }
