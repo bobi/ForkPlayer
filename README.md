@@ -67,6 +67,9 @@ server {
 	location /parserlink {
 		rewrite ^/parserlink/?$ /parserlink.php;
 	}
+    location /proxym3u8 {
+        rewrite ^/proxym3u8.*$ /proxym3u8.php;
+    }
 	location /treeview {
 		rewrite ^/treeview/?$ /index.php;
 	}
