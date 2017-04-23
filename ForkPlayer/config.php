@@ -28,6 +28,3 @@ if (!function_exists('context_path')) {
 
 define('FP_CONTEXT_PATH', context_path());
 
-echo FP_CONTEXT_PATH;
-
-
