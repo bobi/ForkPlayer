@@ -129,7 +129,7 @@ class Request
      */
     public function getBaseUrl()
     {
-        return $this->getScheme() . '://' . $this->getHttpHost() . '/' . FP_CONTEXT_PATH;
+        return $this->getScheme() . '://' . $this->getHttpHost() . '/' . FP_CONTEXT_PATH . '/';
     }
 
     /**
