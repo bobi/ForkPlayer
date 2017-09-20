@@ -38,7 +38,6 @@ class Serializer
 
         if (!empty($channels)) {
             $playlistName = $playlist->getName();
-
             if (!empty($playlistName)) {
                 $elem = $xml->createElement("playlist_name");
                 $elem->appendChild($xml->createCDATASection($playlistName));
@@ -47,10 +46,33 @@ class Serializer
             }
 
             $nextPageUrl = $playlist->getNextPage();
-
             if (!empty($nextPageUrl)) {
                 $elem = $xml->createElement("next_page_url");
                 $elem->appendChild($xml->createCDATASection($nextPageUrl));
+
+                $items->appendChild($elem);
+            }
+
+            $getInfo = $playlist->getGetInfo();
+            if (!empty($getInfo)) {
+                $elem = $xml->createElement("get_info");
+                $elem->appendChild($xml->createCDATASection($getInfo));
+
+                $items->appendChild($elem);
+            }
+
+            $isIpTv = $playlist->isIpTv();
+            if (!empty($isIpTv)) {
+                $elem = $xml->createElement("is_iptv");
+                $elem->appendChild($xml->createCDATASection($isIpTv ? 'true' : 'false'));
+
+                $items->appendChild($elem);
+            }
+
+            $timeout = $playlist->getTimeout();
+            if (!empty($timeout)) {
+                $elem = $xml->createElement("timeout");
+                $elem->appendChild($xml->createCDATASection($timeout));
 
                 $items->appendChild($elem);
             }
@@ -115,15 +137,28 @@ class Serializer
 
         if (!empty($channels)) {
             $playlistName = $playlist->getName();
-
             if (!empty($playlistName)) {
                 $result['playlist_name'] = $playlistName;
             }
 
             $nextPageUrl = $playlist->getNextPage();
-
             if (!empty($nextPageUrl)) {
                 $result['next_page_url'] = $nextPageUrl;
+            }
+
+            $getInfo = $playlist->getGetInfo();
+            if (!empty($getInfo)) {
+                $result['get_info'] = $getInfo;
+            }
+
+            $isIpTv = $playlist->isIpTv();
+            if (!empty($isIpTv)) {
+                $result['is_iptv'] = $isIpTv ? 'true' : 'false';
+            }
+
+            $timeout = $playlist->getTimeout();
+            if (!empty($timeout)) {
+                $result['timeout'] = $timeout;
             }
 
             $items = array();

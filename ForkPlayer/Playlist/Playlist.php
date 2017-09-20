@@ -15,6 +15,21 @@ class Playlist
     private $name;
 
     /**
+     * @var string
+     */
+    private $timeout;
+
+    /**
+     * @var bool
+     */
+    private $isIpTv;
+
+    /**
+     * @var string
+     */
+    private $getInfo;
+
+    /**
      * @var Item[]
      */
     private $items;
@@ -149,5 +164,53 @@ class Playlist
     public function setName($name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTimeout()
+    {
+        return $this->timeout;
+    }
+
+    /**
+     * @param string $timeout
+     */
+    public function setTimeout($timeout)
+    {
+        $this->timeout = $timeout;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isIpTv()
+    {
+        return $this->isIpTv;
+    }
+
+    /**
+     * @param bool $isIpTv
+     */
+    public function setIsIpTv($isIpTv)
+    {
+        $this->isIpTv = $isIpTv;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGetInfo()
+    {
+        return $this->getInfo;
+    }
+
+    /**
+     * @param string $getInfo
+     */
+    public function setGetInfo($getInfo)
+    {
+        $this->getInfo = $getInfo;
     }
 }

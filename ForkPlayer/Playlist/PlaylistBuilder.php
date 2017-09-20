@@ -73,6 +73,38 @@ class PlaylistBuilder
     }
 
     /**
+     * @return PlaylistBuilder
+     */
+    public function withIpTv()
+    {
+        $this->playlist->setIsIpTv(true);
+
+        return $this;
+    }
+
+    /**
+     * @param string $info
+     * @return PlaylistBuilder
+     */
+    public function withGetInfo($info)
+    {
+        $this->playlist->setGetInfo($info);
+
+        return $this;
+    }
+
+    /**
+     * @param string $timeout
+     * @return PlaylistBuilder
+     */
+    public function withTimeout($timeout)
+    {
+        $this->playlist->setTimeout($timeout);
+
+        return $this;
+    }
+
+    /**
      * @return Playlist
      */
     public function build() {

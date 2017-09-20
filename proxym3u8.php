@@ -13,8 +13,18 @@ if (strcasecmp(substr($url, 0, strlen('http//')), 'http//') === 0) {
     $url = 'http://' . substr($url, strlen('http//'));
 }
 
+if (substr($url, 0, 1) == 'B') {
+    if (strpos($url,"endbase64") !== false) {
+        $url = base64_decode(substr($url, 1, strpos($url, 'endbase64') - 1)) . substr($url, strpos($url, 'endbase64') + 9);
+    } else {
+        $url = base64_decode(substr($url, 1, strlen($url) - 2));
+    }
+}
+
 $ts = '';
 $headers = array();
+$userType = false;
+$contentType = 'Content-type: application/vnd.apple.mpegurl';
 
 if (strpos($url, "OPT:") !== false) {
     if (strpos($url, 'OPEND:/') == strlen($url) - 7) {
@@ -31,25 +41,42 @@ if (strpos($url, "OPT:") !== false) {
 
     $url = substr($url, 0, strpos($url, 'OPT:'));
 
+    $requestHeaders = getallheaders();
+
     for ($i = 0; $i < count($requestHeaders); $i++) {
         $headerName = $requestHeaders[$i];
         $headerValue = $requestHeaders[++$i];
 
-        if (strcasecmp('Cookie', $headerName) === 0) {
-            $headerValue = str_replace(';', ',', $headerValue);
-        }
+        if (strcasecmp('ContentType', $headerName) === 0) {
+            if (!empty($requestHeaders['Range'])) {
+                array_push($headers, 'Range' . ':' . $requestHeaders['Range']);
+            }
 
-        array_push($headers, $headerName . ':'. $headerValue);
+            array_push($headers, 'Accept-Ranges' . ':' . 'bytes');
+
+            $userType = true;
+            $contentType = $headerName . ':' . $headerValue;
+        } else {
+            if (strcasecmp('Cookie', $headerName) === 0) {
+                $headerValue = str_replace(';', ',', $headerValue);
+            }
+
+            array_push($headers, $headerName . ':' . $headerValue);
+        }
     }
 }
 
-if (!empty($ts)) {
-    $url = substr($url, 0, strripos($url, '/') + 1) . $ts;
+if (!$userType) {
+    if (!empty($ts)) {
+        $url = substr($url, 0, strripos($url, '/') + 1) . $ts;
 
-    header('Content-type: video/mp2t');
-} else {
-    header('Content-type: application/vnd.apple.mpegurl');
+        $contentType = 'Content-type: video/mp2t';
+    } else {
+        $contentType = 'Content-type: application/vnd.apple.mpegurl';
+    }
 }
+
+header($contentType);
 
 $opts = array(
     'http' => array(
