@@ -16,13 +16,26 @@ function parse_curl_command($command)
     if (preg_match("/(?:\")(.*?)(?=\")/s", $command, $matches) === 1) {
         $curl_opts[CURLOPT_URL] = $matches[1];
 
+        if (strpos($command, '-i') !== false) {
+            $curl_opts[CURLOPT_HEADER] = true;
+        }
+
         if (preg_match_all('/(?:-H\s\")(.*?)(?=\")/s', $command, $matches) !== false) {
             $headers = array();
 
             $matches = $matches[1];
 
             foreach ($matches as $match) {
-                $headers[] = $match;
+                if(
+                    (substr(strtolower(trim($match)), 0, 16) == 'accept-encoding:')
+                    ||
+                    (substr(strtolower(trim($match)), 0, 16) == 'accept-encoding ')
+                ) {
+                    $match = explode(':', $match);
+                    $curl_opts[CURLOPT_ENCODING] = trim($match[1]);
+                } else {
+                    $headers[] = $match;
+                }
             }
 
             $curl_opts[CURLOPT_HTTPHEADER] = $headers;
@@ -147,7 +160,7 @@ function start_with($haystack, $needle, $case = true)
 $result = '';
 $response = '';
 
-$requestStrings = explode('|', urldecode($_SERVER['QUERY_STRING']));
+$requestStrings = explode('|', isset($_POST['s']) ? $_POST['s'] : urldecode($_SERVER['QUERY_STRING']));
 
 if (start_with($requestStrings[0], 'curl')) {
     $response = curl_request(parse_curl_command($requestStrings[0]));
