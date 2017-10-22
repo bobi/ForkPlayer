@@ -5,6 +5,7 @@
  * Date: 19.01.2017
  * Time: 23:54
  */
+
 namespace ForkPlayer\Request;
 
 if (!defined('HTTP_URL_REPLACE')) {
@@ -142,12 +143,28 @@ class Request
     }
 
     /**
+     * @param string[] $keys
+     * @return bool
+     */
+    public function hasAllParameters($keys)
+    {
+        foreach ($keys as $key) {
+            if (!isset($_GET[$key]) && !isset($_POST[$key])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * @param string $key
+     * @param string $default
      * @return string
      */
-    public function getParameter($key)
+    public function getParameter($key, $default = null)
     {
-        return isset($_GET[$key]) ? urldecode($_GET[$key]) : (isset($_POST[$key]) ? urldecode($_POST[$key]) : null);
+        return isset($_GET[$key]) ? urldecode($_GET[$key]) : (isset($_POST[$key]) ? urldecode($_POST[$key]) : $default);
     }
 
     /**
