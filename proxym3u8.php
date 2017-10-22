@@ -6,6 +6,8 @@
  * Time: 22:48
  */
 
+require_once('getallheaders.php');
+
 $url = substr($_SERVER['REQUEST_URI'], strlen('/proxym3u8'));
 
 //just for debugging on windows only

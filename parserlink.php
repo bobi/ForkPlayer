@@ -72,6 +72,7 @@ function curl_request($options)
 
     if (curl_errno($ch)) {
         $result = 'Error:' . curl_error($ch);
+        error_log('CURL '.$result);
     }
 
     $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
