@@ -41,7 +41,8 @@ if (strpos($url, "OPT:") !== false) {
 
     $url = substr($url, 0, strpos($url, 'OPT:'));
 
-    $requestHeaders = getallheaders();
+    //why it is here?
+    //$requestHeaders = getallheaders();
 
     for ($i = 0; $i < count($requestHeaders); $i++) {
         $headerName = $requestHeaders[$i];
