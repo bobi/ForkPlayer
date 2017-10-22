@@ -72,6 +72,7 @@ function curl_request($options)
 
     if (curl_errno($ch)) {
         $result = 'Error:' . curl_error($ch);
+        error_log('CURL '.$result);
     }
 
     $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
@@ -165,9 +166,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 if (!empty($requestStrings)) {
-    if (strpos($requestStrings[0], 'curlorig') === 0) {
+    /*if (strpos($requestStrings[0], 'curlorig') === 0) {
         $curlResponse = shell_exec('curl ' . substr($requestStrings[0], 9)) ?: '';
-    } else if (start_with($requestStrings[0], 'curl')) {
+    } else*/ if (start_with($requestStrings[0], 'curl')) {
         $curlResponse = curl_request(parse_curl_command($requestStrings[0]));
     } else {
         $curlResponse = curl_request(array(
