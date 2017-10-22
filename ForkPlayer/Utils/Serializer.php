@@ -108,14 +108,17 @@ class Serializer
                         $chElement->appendChild($elem);
 
                         $elem = $xml->createElement("search_on");
-                        $elem->appendChild($xml->createTextNode("search"));
+                        $elem->appendChild($xml->createTextNode($channel->getName()));
                         $chElement->appendChild($elem);
                         break;
                 }
 
-                $elem = $xml->createElement("logo_30x30");
-                $elem->appendChild($xml->createCDATASection($channel->getImageLink()));
-                $chElement->appendChild($elem);
+                $imageLink = $channel->getImageLink();
+                if (!empty($imageLink)) {
+                    $elem = $xml->createElement("logo_30x30");
+                    $elem->appendChild($xml->createCDATASection($imageLink));
+                    $chElement->appendChild($elem);
+                }
 
                 $items->appendChild($chElement);
             }
@@ -185,11 +188,14 @@ class Serializer
                         break;
                     case ItemType::SEARCH:
                         $ch['playlist_url'] = $channel->getLink();
-                        $ch['search_on'] = 'search';
+                        $ch['search_on'] = $channel->getName();
                         break;
                 }
 
-                $ch['logo_30x30'] = $channel->getImageLink();
+                $imageLink = $channel->getImageLink();
+                if (!empty($imageLink)) {
+                    $ch['logo_30x30'] = $imageLink;
+                }
 
                 array_push($items, $ch);
             }
