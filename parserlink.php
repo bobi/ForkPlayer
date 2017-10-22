@@ -13,6 +13,15 @@
 function parse_curl_command($command)
 {
     $curl_opts = array();
+
+    if (strpos($command, ' -i') !== false) {
+        $curl_opts[CURLOPT_HEADER] = true;
+    }
+
+    if (strpos($command, ' -L') !== false) {
+        $curl_opts[CURLOPT_FOLLOWLOCATION] = true;
+    }
+
     if (preg_match("/(?:\")(.*?)(?=\")/s", $command, $matches) === 1) {
         $curl_opts[CURLOPT_URL] = $matches[1];
 
@@ -21,16 +30,21 @@ function parse_curl_command($command)
 
             $matches = $matches[1];
 
-            foreach ($matches as $match) {
-                $headers[] = $match;
+            foreach ($matches as $header) {
+                if(start_with(trim($header), 'accept-encoding', false)) {
+                    $headerValue = preg_split('/(:|\s)/', $header);
+                    $curl_opts[CURLOPT_ENCODING] = trim($headerValue[1]);
+                } else {
+                    $headers[] = $header;
+                }
             }
 
             $curl_opts[CURLOPT_HTTPHEADER] = $headers;
 
             if (strpos($command, '--data') !== false
                 && preg_match('/(?:--data\s\")(.*?)(?=\")/s', $command, $matches) === 1) {
-                    $curl_opts[CURLOPT_POST] = 1;
-                    $curl_opts[CURLOPT_POSTFIELDS] = $matches[1];
+                $curl_opts[CURLOPT_POST] = 1;
+                $curl_opts[CURLOPT_POSTFIELDS] = $matches[1];
             } else {
                 $curl_opts[CURLOPT_CUSTOMREQUEST] = 'GET';
             }
@@ -52,9 +66,7 @@ function curl_request($options)
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
-    foreach ($options as $key => $value) {
-        curl_setopt($ch, $key, $value);
-    }
+    curl_setopt_array($ch, $options);
 
     $result = curl_exec($ch);
 
@@ -144,35 +156,43 @@ function start_with($haystack, $needle, $case = true)
 
 
 $result = '';
-$response = '';
+$curlResponse = '';
 
 $requestStrings = explode('|', urldecode($_SERVER['QUERY_STRING']));
-
-if (start_with($requestStrings[0], 'curl')) {
-    $response = curl_request(parse_curl_command($requestStrings[0]));
-} else {
-    $response = curl_request(array(
-        CURLOPT_CUSTOMREQUEST => 'GET',
-        CURLOPT_URL => $requestStrings[0]
-    ));
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $postData = file_get_contents('php://input');
+    $requestStrings = explode('|', urldecode(substr($postData, 2)));
 }
 
-if (count($requestStrings) == 1) {
-    $result = $response;
-} else {
-    if (strpos($requestStrings[1], '.*?') !== false) {
-        if (preg_match_all("@$requestStrings[1](.*?)$requestStrings[2]@s", $response, $matches) !== false) {
-            $result = $matches[1][0];
-        }
+if (!empty($requestStrings)) {
+    if (strpos($requestStrings[0], 'curlorig') === 0) {
+        $curlResponse = shell_exec('curl ' . substr($requestStrings[0], 9)) ?: '';
+    } else if (start_with($requestStrings[0], 'curl')) {
+        $curlResponse = curl_request(parse_curl_command($requestStrings[0]));
     } else {
-        if (empty($requestStrings[1]) && empty($requestStrings[2])) {
-            $result = $response;
-        } else {
-            if (($start = strpos($response, $requestStrings[1])) !== false) {
-                $start += strlen($requestStrings[1]);
-                if (($end = strpos($response, $requestStrings[2], $start)) !== false) {
-                    $result = substr($response, $start, $end - $start);
+        $curlResponse = curl_request(array(
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_URL => $requestStrings[0]
+        ));
+    }
+
+    if (count($requestStrings) == 1) {
+        $result = $curlResponse;
+    } else {
+        if (strpos($requestStrings[1], '.*?') === false) {
+            if (empty($requestStrings[1]) && empty($requestStrings[2])) {
+                $result = $curlResponse;
+            } else {
+                if (($start = strpos($curlResponse, $requestStrings[1])) !== false) {
+                    $start += strlen($requestStrings[1]);
+                    if (($end = strpos($curlResponse, $requestStrings[2], $start)) !== false) {
+                        $result = substr($curlResponse, $start, $end - $start);
+                    }
                 }
+            }
+        } else {
+            if (preg_match_all("@$requestStrings[1](.*?)$requestStrings[2]@s", $curlResponse, $matches) !== false) {
+                $result = $matches[1][0];
             }
         }
     }

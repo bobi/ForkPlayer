@@ -25,9 +25,13 @@ class OutputFormat
      */
     public function __construct()
     {
-        $outputFormat = strtolower($_SERVER[self::OUTPUT_FORMAT]);
+        $outputFormat = self::XML;
 
-        $this->format = empty($outputFormat) || empty($this->mimeTypes[$outputFormat]) ? 'xml' : $outputFormat;
+        if (!empty($_SERVER[self::OUTPUT_FORMAT])) {
+            $outputFormat = strtolower($_SERVER[self::OUTPUT_FORMAT]);
+        }
+
+        $this->format = empty($this->mimeTypes[$outputFormat]) ? self::XML : $outputFormat;
     }
 
     /**

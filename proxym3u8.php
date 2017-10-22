@@ -22,7 +22,7 @@ if (substr($url, 0, 1) == 'B') {
 }
 
 $ts = '';
-$headers = array();
+$responseHeaders = [];
 $userType = false;
 $contentType = 'Content-type: application/vnd.apple.mpegurl';
 
@@ -37,22 +37,22 @@ if (strpos($url, "OPT:") !== false) {
         $url = substr($url, 0, strpos($url, 'OPEND:/'));
     }
 
-    $requestHeaders = explode('|', str_replace('--', '|', substr($url, strpos($url, 'OPT:') + 4)));
+    $urlHeaders = explode('|', str_replace('--', '|', substr($url, strpos($url, 'OPT:') + 4)));
 
     $url = substr($url, 0, strpos($url, 'OPT:'));
 
     $requestHeaders = getallheaders();
 
-    for ($i = 0; $i < count($requestHeaders); $i++) {
-        $headerName = $requestHeaders[$i];
-        $headerValue = $requestHeaders[++$i];
+    for ($i = 0; $i < count($urlHeaders); $i++) {
+        $headerName = $urlHeaders[$i];
+        $headerValue = $urlHeaders[++$i];
 
         if (strcasecmp('ContentType', $headerName) === 0) {
             if (!empty($requestHeaders['Range'])) {
-                array_push($headers, 'Range' . ':' . $requestHeaders['Range']);
+                array_push($responseHeaders, 'Range' . ':' . $requestHeaders['Range']);
             }
 
-            array_push($headers, 'Accept-Ranges' . ':' . 'bytes');
+            array_push($responseHeaders, 'Accept-Ranges' . ':' . 'bytes');
 
             $userType = true;
             $contentType = $headerName . ':' . $headerValue;
@@ -61,7 +61,7 @@ if (strpos($url, "OPT:") !== false) {
                 $headerValue = str_replace(';', ',', $headerValue);
             }
 
-            array_push($headers, $headerName . ':' . $headerValue);
+            array_push($responseHeaders, $headerName . ':' . $headerValue);
         }
     }
 }
@@ -81,7 +81,7 @@ header($contentType);
 $opts = array(
     'http' => array(
         'method' => 'GET',
-        'header' => $headers
+        'header' => $responseHeaders
     )
 );
 
