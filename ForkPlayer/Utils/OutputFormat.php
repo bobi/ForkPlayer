@@ -8,9 +8,6 @@
 
 namespace ForkPlayer\Utils;
 
-require_once '../config.php';
-
-
 class OutputFormat
 {
     const OUTPUT_FORMAT = 'OUTPUT_FORMAT';
