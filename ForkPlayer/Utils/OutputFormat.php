@@ -8,6 +8,8 @@
 
 namespace ForkPlayer\Utils;
 
+require_once '../config.php';
+
 
 class OutputFormat
 {
@@ -25,7 +27,7 @@ class OutputFormat
      */
     public function __construct()
     {
-        $outputFormat = self::XML;
+        $outputFormat = DEFAULT_OUTPUT_FORMAT;
 
         if (!empty($_SERVER[self::OUTPUT_FORMAT])) {
             $outputFormat = strtolower($_SERVER[self::OUTPUT_FORMAT]);

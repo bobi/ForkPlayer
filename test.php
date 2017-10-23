@@ -6,4 +6,6 @@
  * Time: 21:14
  */
 
-echo "<html><h1>ForkPlayer Work!</h1><br><b>RemoteFork Server Emulator. v. 1.37.0 </b></html>";
+require_once 'ForkPlayer/config.php';
+
+echo "<html><h1>ForkPlayer Work!</h1><br><b>RemoteFork Server Emulator. v. " . REMOTE_FORK_VERSION . " </b></html>";

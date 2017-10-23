@@ -6,6 +6,8 @@
  * Time: 21:15
  */
 
+require_once 'ForkPlayer/config.php';
+
 /**
  * @param string $command
  * @return array
@@ -31,7 +33,7 @@ function parse_curl_command($command)
             $matches = $matches[1];
 
             foreach ($matches as $header) {
-                if(start_with(trim($header), 'accept-encoding', false)) {
+                if (start_with(trim($header), 'accept-encoding', false)) {
                     $headerValue = preg_split('/(:|\s)/', $header);
                     $curl_opts[CURLOPT_ENCODING] = trim($headerValue[1]);
                 } else {
@@ -72,6 +74,8 @@ function curl_request($options)
 
     if (curl_errno($ch)) {
         $result = 'Error:' . curl_error($ch);
+
+        error_log('CURL Error' . $result);
     }
 
     $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
@@ -140,6 +144,15 @@ function detect_charset($result, $content_type)
 }
 
 /**
+ * @param string $command
+ * @return string
+ */
+function exec_curl($command)
+{
+    return curl_request(parse_curl_command($command));
+}
+
+/**
  * @param string $haystack
  * @param string $needle
  * @param bool $case
@@ -166,9 +179,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 if (!empty($requestStrings)) {
     if (strpos($requestStrings[0], 'curlorig') === 0) {
-        $curlResponse = shell_exec('curl ' . substr($requestStrings[0], 9)) ?: '';
-    } else if (start_with($requestStrings[0], 'curl')) {
-        $curlResponse = curl_request(parse_curl_command($requestStrings[0]));
+        $curlResponse = exec_curl('curl ' . substr($requestStrings[0], 9));
+    } elseif (start_with($requestStrings[0], 'curl')) {
+        $curlResponse = exec_curl($requestStrings[0]);
     } else {
         $curlResponse = curl_request(array(
             CURLOPT_CUSTOMREQUEST => 'GET',

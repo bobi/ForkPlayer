@@ -28,3 +28,6 @@ if (!function_exists('context_path')) {
 
 define('FP_CONTEXT_PATH', context_path());
 
+define('REMOTE_FORK_VERSION', '1.37.0');
+
+define('DEFAULT_OUTPUT_FORMAT', 'xml');
