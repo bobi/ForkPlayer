@@ -73,6 +73,17 @@ class PlaylistBuilder
     }
 
     /**
+     * @param string $typeList
+     * @return PlaylistBuilder
+     */
+    public function withTypeList($typeList)
+    {
+        $this->playlist->setTypeList($typeList);
+
+        return $this;
+    }
+
+    /**
      * @return PlaylistBuilder
      */
     public function withIpTv()

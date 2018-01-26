@@ -83,7 +83,7 @@ class ForkPlayer
             );
         }
 
-        return Playlist::builder()->withName("All Plugins")->withItems($items)->build();
+        return Playlist::builder()->withName("All Plugins")->withTypeList("start")->withItems($items)->build();
     }
 
     /**

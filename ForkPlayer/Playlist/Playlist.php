@@ -17,6 +17,11 @@ class Playlist
     /**
      * @var string
      */
+    private $typeList;
+
+    /**
+     * @var string
+     */
     private $timeout;
 
     /**
@@ -212,5 +217,21 @@ class Playlist
     public function setGetInfo($getInfo)
     {
         $this->getInfo = $getInfo;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTypeList()
+    {
+        return $this->typeList;
+    }
+
+    /**
+     * @param string $typeList
+     */
+    public function setTypeList($typeList)
+    {
+        $this->typeList = $typeList;
     }
 }

@@ -53,6 +53,14 @@ class Serializer
                 $items->appendChild($elem);
             }
 
+            $typeList = $playlist->getTypeList();
+            if (!empty($typeList)) {
+                $elem = $xml->createElement("typeList");
+                $elem->appendChild($xml->createCDATASection($typeList));
+
+                $items->appendChild($elem);
+            }
+
             $getInfo = $playlist->getGetInfo();
             if (!empty($getInfo)) {
                 $elem = $xml->createElement("get_info");
@@ -147,6 +155,11 @@ class Serializer
             $nextPageUrl = $playlist->getNextPage();
             if (!empty($nextPageUrl)) {
                 $result['next_page_url'] = $nextPageUrl;
+            }
+
+            $typeList = $playlist->getTypeList();
+            if (!empty($typeList)) {
+                $result['typeList'] = $typeList;
             }
 
             $getInfo = $playlist->getGetInfo();
