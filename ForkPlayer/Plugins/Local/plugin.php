@@ -60,7 +60,7 @@ class LocalPlugin extends BasePlugin
      */
     private function readDir($context, $basePath) {
         $dir = dir(realpath($basePath));
-
+        $curdir = realpath($dir->path);
         $items = array();
 
         while (false !== ($filename = $dir->read())) {
@@ -83,7 +83,7 @@ class LocalPlugin extends BasePlugin
                         new Item(
                             $filename,
                             '',
-                            $context->getRequest()->absoluteUrl($this->urlRoot . '/' . ($this->relativePath($path))),
+                            $context->getRequest()->absoluteUrl($this->urlRoot . '/' . ($this->relativePath($curdir).'/'.$filename)),
                             '',
                             ItemType::from(ItemType::FILE)
                         )
