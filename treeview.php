@@ -5,6 +5,7 @@
  * Date: 26.01.2017
  * Time: 21:24
  */
+error_reporting(0);
 
 $xml = new DOMDocument("1.0", "UTF-8");
 

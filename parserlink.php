@@ -5,8 +5,10 @@
  * Date: 26.01.2017
  * Time: 21:15
  */
+error_reporting(0);
 
 require_once 'ForkPlayer/config.php';
+
 
 /**
  * @param string $command

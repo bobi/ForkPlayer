@@ -6,6 +6,8 @@
  * Time: 22:48
  */
 
+error_reporting(0);
+
 require_once('getallheaders.php');
 
 $url = substr($_SERVER['REQUEST_URI'], strlen('/proxym3u8'));
@@ -94,5 +96,7 @@ $fp = fopen($url, 'rb', false, $context);
 if ($fp) {
     fpassthru($fp);
 
+    fclose($fp);
+} else {
     fclose($fp);
 }
