@@ -88,6 +88,8 @@ function curl_request($options)
         $result = mb_convert_encoding($result, 'UTF-8', $charset);
     }
 
+    $result = str_replace('#EXTM3U', PHP_EOL.PHP_EOL.'#EXTM3U', $result);
+
     return $result;
 }
 
