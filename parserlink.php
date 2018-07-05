@@ -70,25 +70,55 @@ function curl_request($options)
 
     curl_setopt_array($ch, $options);
 
-    $result = curl_exec($ch);
+    $response = curl_exec($ch);
 
     if (curl_errno($ch)) {
-        $result = 'Error:' . curl_error($ch);
+        $response = 'Error:' . curl_error($ch);
 
-        error_log('CURL Error' . $result);
+        error_log('CURL Error' . $response);
     }
 
     $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+    $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 
     curl_close($ch);
 
-    $charset = detect_charset($result, $content_type);
+    if (isset($options[CURLOPT_HEADER]) && $options[CURLOPT_HEADER] == true) {
+        $headers = skip_http_status(substr($response, 0, $header_size));
+        $body = convert_encoding(substr($response, $header_size), $content_type);
 
-    if (!empty($charset) && strtoupper($charset) != "UTF-8") {
-        $result = mb_convert_encoding($result, 'UTF-8', $charset);
+        return sprintf("%s\n%s", $headers, $body);
+    } else {
+        return convert_encoding($response, $content_type);
     }
+}
 
-    return $result;
+/**
+ * @param $headers_in
+ * @return string
+ */
+function skip_http_status($headers_in)
+{
+    $headers = explode("\r\n", $headers_in);
+
+    array_shift($headers);
+
+    return implode("\r\n", $headers);
+}
+
+/**
+ * @param $body
+ * @param $content_type
+ * @return string
+ */
+function convert_encoding($body, $content_type)
+{
+    $charset = detect_charset($body, $content_type);
+    if (!empty($charset) && strtoupper($charset) != "UTF-8") {
+        return mb_convert_encoding($body, 'UTF-8', $charset);
+    } else {
+        return $body;
+    }
 }
 
 /**
