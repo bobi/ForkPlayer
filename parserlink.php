@@ -245,6 +245,7 @@ if (!empty($requestStrings)) {
     } else {
         $curlResponse = curl_request(array(
             CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_URL => $requestStrings[0]
         ));
     }
