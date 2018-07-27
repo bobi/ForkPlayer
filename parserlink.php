@@ -85,7 +85,7 @@ function curl_request($options)
     curl_close($ch);
 
     if (isset($options[CURLOPT_HEADER]) && $options[CURLOPT_HEADER] == true) {
-        $headers = format_http_headers(substr($response, 0, $header_size));
+        $headers = get_http_headers(substr($response, 0, $header_size));
         $body = convert_encoding(substr($response, $header_size), $content_type);
 
         return sprintf("%s\n%s", $headers, $body);
@@ -95,42 +95,45 @@ function curl_request($options)
 }
 
 /**
- * @param $headers_in
+ * @param $headers_text
  * @return string
  */
-function format_http_headers($headers_in)
+function get_http_headers($headers_text)
 {
-    $headers = array();
+    $headers_map = array();
 
-    foreach (explode("\r\n", $headers_in) as $i => $line) {
-        if ($i !== 0 && isset($line) && !empty($line)) {
+    foreach (explode("\r\n", $headers_text) as $i => $line) {
+        if (isset($line) && !empty($line) && !start_with($line, 'HTTP/', false)) {
             list ($key, $value) = explode(': ', $line);
-
-            $headers[$key] = $value;
+            if (!isset($headers_map[$key])) {
+                $headers_map[$key] = array($value);
+            } else {
+                array_push($headers_map[$key], $value);
+            }
         }
     }
 
-    if (isset($headers['Location'])) {
-        $v = $headers['Location'];
-        unset($headers['Location']);
-        $headers['Location'] = $v;
+    if (isset($headers_map['Location'])) {
+        $v = $headers_map['Location'];
+        unset($headers_map['Location']);
+        $headers_map['Location'] = $v;
     }
 
-    if (isset($headers['Server'])) {
-        $v = $headers['Server'];
-        unset($headers['Server']);
-        $headers['Server'] = $v;
+    if (isset($headers_map['Server'])) {
+        $v = $headers_map['Server'];
+        unset($headers_map['Server']);
+        $headers_map['Server'] = $v;
     }
 
-    return implode(
-        "\n",
-        array_map(
-            function ($v, $k) {
-                return sprintf("%s: %s", $k, $v);
-            },
-            $headers,
-            array_keys($headers)
-        ));
+    $headers = array();
+
+    foreach ($headers_map as $header_name => $header) {
+        foreach ($header as $line) {
+            array_push($headers, sprintf("%s: %s", $header_name, $line));
+        }
+    }
+
+    return implode("\n", $headers);
 }
 
 /**
