@@ -85,7 +85,7 @@ function curl_request($options)
     curl_close($ch);
 
     if (isset($options[CURLOPT_HEADER]) && $options[CURLOPT_HEADER] == true) {
-        $headers = skip_http_status(substr($response, 0, $header_size));
+        $headers = format_http_headers(substr($response, 0, $header_size));
         $body = convert_encoding(substr($response, $header_size), $content_type);
 
         return sprintf("%s\n%s", $headers, $body);
@@ -98,13 +98,39 @@ function curl_request($options)
  * @param $headers_in
  * @return string
  */
-function skip_http_status($headers_in)
+function format_http_headers($headers_in)
 {
-    $headers = explode("\r\n", $headers_in);
+    $headers = array();
 
-    array_shift($headers);
+    foreach (explode("\r\n", $headers_in) as $i => $line) {
+        if ($i !== 0 && isset($line) && !empty($line)) {
+            list ($key, $value) = explode(': ', $line);
 
-    return implode("\r\n", $headers);
+            $headers[$key] = $value;
+        }
+    }
+
+    if (isset($headers['Location'])) {
+        $v = $headers['Location'];
+        unset($headers['Location']);
+        $headers['Location'] = $v;
+    }
+
+    if (isset($headers['Server'])) {
+        $v = $headers['Server'];
+        unset($headers['Server']);
+        $headers['Server'] = $v;
+    }
+
+    return implode(
+        "\n",
+        array_map(
+            function ($v, $k) {
+                return sprintf("%s: %s", $k, $v);
+            },
+            $headers,
+            array_keys($headers)
+        ));
 }
 
 /**
